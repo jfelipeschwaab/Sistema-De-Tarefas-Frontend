@@ -4,6 +4,7 @@ import React, { useRef } from "react";
 import { useDrag, useDrop, DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Task } from "@/types/task";
+import { FiTrash2, FiEdit2, FiChevronUp, FiChevronDown } from "react-icons/fi";
 
 interface TaskListProps {
   tasks: Task[];
@@ -96,28 +97,49 @@ const TaskItem: React.FC<TaskItemProps> = ({
         task.custo >= 1000 ? "bg-yellow-200" : "bg-gray-700"
       }`}
     >
-      <div className="flex justify-between">
+      <div className="flex justify-between items-center">
         <div>
           <p className="font-bold">{task.nome}</p>
           <p>Custo: R${task.custo}</p>
           <p>Data Limite: {task.dataLimite}</p>
         </div>
         <div className="flex space-x-2">
-          <button onClick={() => onEdit(task.id)} className="text-blue-400">
-            Editar
+          {/* Ícone de Editar */}
+          <button
+            onClick={() => onEdit(task.id)}
+            className="text-blue-400 hover:text-blue-400 cursor-pointer"
+          >
+            <FiEdit2 size={20} />
           </button>
-          <button onClick={() => onDelete(task.id)} className="text-red-400">
-            Excluir
+
+          {/* Ícone de Excluir */}
+          <button
+            onClick={() => onDelete(task.id)}
+            className="text-red-400 hover:text-red-400 cursor-pointer"
+          >
+            <FiTrash2 size={20} />
           </button>
-          <button onClick={() => onReorder(task.id, "up")} disabled={index === 0} className="text-gray-400">
-            ↑
+
+          {/* Ícone de Subir */}
+          <button
+            onClick={() => onReorder(task.id, "up")}
+            disabled={index === 0}
+            className={`text-gray-400 ${
+              index === 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+            }`}
+          >
+            <FiChevronUp size={20} />
           </button>
+
+          {/* Ícone de Descer */}
           <button
             onClick={() => onReorder(task.id, "down")}
             disabled={index === tasks.length - 1}
-            className="text-gray-400"
+            className={`text-gray-400 ${
+              index === tasks.length - 1 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+            }`}
           >
-            ↓
+            <FiChevronDown size={20} />
           </button>
         </div>
       </div>
