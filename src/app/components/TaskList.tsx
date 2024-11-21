@@ -18,7 +18,14 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, setTasks, onEdit, onDelete, 
     const reorderedTasks = [...tasks];
     const [draggedItem] = reorderedTasks.splice(dragIndex, 1);
     reorderedTasks.splice(hoverIndex, 0, draggedItem);
-    setTasks(reorderedTasks);
+
+    // Atualizar ordem
+    setTasks(
+      reorderedTasks.map((task, index) => ({
+        ...task,
+        ordem: index + 1,
+      }))
+    );
   };
 
   return (
@@ -85,7 +92,9 @@ const TaskItem: React.FC<TaskItemProps> = ({
   return (
     <li
       ref={ref}
-      className={`p-4 bg-gray-700 rounded mb-2 ${isDragging ? "opacity-50" : "opacity-100"}`}
+      className={`p-4 rounded mb-2 ${isDragging ? "opacity-50" : "opacity-100"} ${
+        task.custo >= 1000 ? "bg-yellow-200" : "bg-gray-700"
+      }`}
     >
       <div className="flex justify-between">
         <div>
@@ -100,11 +109,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
           <button onClick={() => onDelete(task.id)} className="text-red-400">
             Excluir
           </button>
-          <button
-            onClick={() => onReorder(task.id, "up")}
-            disabled={index === 0}
-            className="text-gray-400"
-          >
+          <button onClick={() => onReorder(task.id, "up")} disabled={index === 0} className="text-gray-400">
             ↑
           </button>
           <button
