@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import Swal from "sweetalert2"; // Importar SweetAlert2
+import "sweetalert2/src/sweetalert2.scss"; // Importar estilos do SweetAlert2
 
 interface TaskFormProps {
   onSubmit: (task: { nome: string; custo: number; dataLimite: string }) => void;
@@ -24,7 +26,14 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, initialData, tasks }) => 
           task.nome !== initialData?.nome // Permitir edição sem bloquear
       )
     ) {
-      alert("Já existe uma tarefa com este nome.");
+      // Substituir o alert padrão pelo SweetAlert
+      Swal.fire({
+        title: "Erro",
+        text: "Já existe uma tarefa com este nome.",
+        icon: "error",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#3085d6",
+      });
       return;
     }
 
