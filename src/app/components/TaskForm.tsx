@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import Swal from "sweetalert2"; // Importar SweetAlert2
-import "sweetalert2/src/sweetalert2.scss"; // Importar estilos do SweetAlert2
+import Swal from "sweetalert2";
+import "sweetalert2/src/sweetalert2.scss";
+import { FiDollarSign } from "react-icons/fi"; // Ícone de preço
 
 interface TaskFormProps {
   onSubmit: (task: { nome: string; custo: number; dataLimite: string }) => void;
   initialData?: { nome: string; custo: number; dataLimite: string };
-  tasks: { nome: string }[]; // Adicionado para verificar duplicidade
+  tasks: { nome: string }[];
 }
 
 const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, initialData, tasks }) => {
@@ -18,15 +19,13 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, initialData, tasks }) => 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Verificar duplicidade
     if (
       tasks.some(
         (task) =>
           task.nome.toLowerCase() === nome.toLowerCase() &&
-          task.nome !== initialData?.nome // Permitir edição sem bloquear
+          task.nome !== initialData?.nome
       )
     ) {
-      // Substituir o alert padrão pelo SweetAlert
       Swal.fire({
         title: "Erro",
         text: "Já existe uma tarefa com este nome.",
@@ -38,6 +37,22 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, initialData, tasks }) => 
     }
 
     onSubmit({ nome, custo, dataLimite });
+  };
+
+  const formatPrice = (value: string) => {
+    // Remover caracteres não numéricos e formatar como moeda
+    const numericValue = value.replace(/[^0-9]/g, "");
+    const formattedValue = new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(parseFloat(numericValue) / 100);
+    return formattedValue;
+  };
+
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formattedValue = formatPrice(e.target.value);
+    const numericValue = parseFloat(formattedValue.replace(/[^0-9]/g, "")) / 100;
+    setCusto(numericValue);
   };
 
   return (
@@ -52,15 +67,21 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, initialData, tasks }) => 
           required
         />
       </div>
-      <div className="mb-4">
+      <div className="mb-4 relative">
         <label className="block text-white">Custo</label>
-        <input
-          type="number"
-          value={custo}
-          onChange={(e) => setCusto(Number(e.target.value))}
-          className="w-full p-2 border border-gray-300 rounded text-black"
-          required
-        />
+        <div className="relative">
+          <input
+            type="text"
+            value={new Intl.NumberFormat("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            }).format(custo)}
+            onChange={handlePriceChange}
+            className="w-full p-2 border border-gray-300 rounded text-black pr-8"
+            required
+          />
+          <FiDollarSign className="absolute right-3 top-3 text-gray-500" />
+        </div>
       </div>
       <div className="mb-4">
         <label className="block text-white">Data Limite</label>
